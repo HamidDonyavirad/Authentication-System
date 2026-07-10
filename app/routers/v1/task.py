@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from app.models.task import Task
 from app.models.user import User
@@ -18,8 +19,22 @@ async def create_task(task: TsakCreate,db:Session = Depends(get_db),current_user
     return new_task
 
 @router.get("/", response_model=list[TaskResponse])
-async def get_tasks(db:Session = Depends(get_db),current_user: User = Depends(get_current_user)):
-    return db.query(Task).filter(Task.owner_id==current_user.id).all()
+async def get_tasks(
+    completed: Optional[bool] = None,
+    category: Optional[str] = None,
+    db:Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+    ):
+    query=db.query(Task).filter(Task.owner_id==current_user.id)
+    if completed is not None:
+        query = query.filter(
+            Task.completed == completed
+        )
+    if category:
+        query = query.filter(
+            Task.category == category
+        )
+    return query.all()
 
 @router.get("/{task_id}", response_model=TaskResponse)
 async  def get_task(task_id:int,db:Session = Depends(get_db),current_user: User = Depends(get_current_user)):
