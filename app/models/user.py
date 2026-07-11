@@ -14,7 +14,7 @@ class User(Base):
     is_verified = Column(Boolean,default=False)
     created_at = Column(DateTime,default=datetime.now(timezone.utc))
 
-    tasks = relationship('Task',back_populates="owner",cascade="all,delete")
-
+    tasks = relationship('Task',back_populates="owner",cascade="all,delete-orphan")
+    reset_token = relationship("PasswordResetToken",back_populates="user",cascade="all,delete-orphan")
 
 
