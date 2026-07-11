@@ -10,6 +10,15 @@ from app.core.security import get_current_user
 
 router = APIRouter(prefix="/task", tags=["task"])
 
+
+def get_user_task(
+        db: Session ,
+        task_id: int,
+        user_id:int
+        ):
+    return db.query(Task).filter(Task.id == task_id,Task.owner_id==user_id).first()
+
+#endpoinds
 @router.post("/", response_model = TaskResponse)
 async def create_task(task: TsakCreate,db:Session = Depends(get_db),current_user: User = Depends(get_current_user)):
     new_task = Task(title=task.title, description=task.description, category=task.category,  owner_id=current_user.id)
@@ -38,14 +47,14 @@ async def get_tasks(
 
 @router.get("/{task_id}", response_model=TaskResponse)
 async  def get_task(task_id:int,db:Session = Depends(get_db),current_user: User = Depends(get_current_user)):
-    task = db.query(Task).filter(Task.id == task_id,Task.owner_id==current_user.id).first()
+    task = get_user_task(task_id=task_id,db=db,user_id=current_user.id)
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
 
 @router.put("/{task_id}", response_model=TaskResponse)
 async def update_task (task_id: int , task_data: TaskUpdate,db: Session = Depends(get_db),current_user: User = Depends(get_current_user)):
-    task = db.query(Task).filter(Task.id == task_id, Task.owner_id==current_user.id).first()
+    task = get_user_task(task_id=task_id,db=db,user_id=current_user.id)
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     for key,value in task_data.model_dump(exclude_unset= True).items():
@@ -56,7 +65,7 @@ async def update_task (task_id: int , task_data: TaskUpdate,db: Session = Depend
 
 @router.delete("/{task_id}")
 async def delete_task(task_id:int, db:Session = Depends(get_db),current_user: User = Depends(get_current_user)):
-    task = db.query(Task).filter(Task.id == task_id, Task.owner_id == current_user.id).first()
+    task = get_user_task(task_id=task_id,db=db,user_id=current_user.id)
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     db.delete(task)
