@@ -56,7 +56,7 @@ async def update_task (task_id: int , task_data: TaskUpdate,db: Session = Depend
 
 @router.delete("/{task_id}")
 async def delete_task(task_id:int, db:Session = Depends(get_db),current_user: User = Depends(get_current_user)):
-    task = db.query(Task).filter(Task.id == task_id).first()
+    task = db.query(Task).filter(Task.id == task_id, Task.owner_id == current_user.id).first()
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     db.delete(task)
