@@ -13,4 +13,4 @@ class Task(Base):
     category = Column(String(100), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     owner_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    owner = relationship("User", backref="tasks")
+    owner = relationship("User", back_populates="tasks")
