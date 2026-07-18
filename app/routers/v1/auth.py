@@ -1,4 +1,5 @@
-from fastapi import Depends,HTTPException,APIRouter
+
+from fastapi import Depends,HTTPException,APIRouter,Request
 from sqlalchemy.orm import Session
 
 from app.dependencies.dep_database import get_db
@@ -6,14 +7,14 @@ from app.models.user import User
 from app.schemas.user import UserCreate
 from app.schemas.user import UserResponse
 from app.core.security import hash_password
-
 from app.schemas.auth import Token,LoginSchema
 from app.core.security import verify_password,create_access_token,get_current_user
-
+from app.core.limiter import limiter
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 @router.post("/signup", response_model=UserResponse)
-async def signup(user_data: UserCreate, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+async def signup(user_data: UserCreate,request: Request, db: Session = Depends(get_db)):
     existing_email = db.query(User).filter(User.email == user_data.email).first()
     if existing_email:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -27,7 +28,8 @@ async def signup(user_data: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 @router.post("/login", response_model=Token)
-async def login(user_data: LoginSchema, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+async def login(user_data: LoginSchema,request: Request, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email==user_data.email).first()
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")

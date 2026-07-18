@@ -1,4 +1,4 @@
-from fastapi import Depends,APIRouter,HTTPException
+from fastapi import Depends,APIRouter,HTTPException,Request
 from sqlalchemy.orm import Session
 import  secrets
 from datetime import datetime, timedelta, timezone
@@ -9,11 +9,13 @@ from app.models.password_reset import PasswordResetToken
 from app.schemas.password_reset import ForgetPassword, ResetPassword
 from app.models.user import User
 from app.core.security import hash_password
+from app.core.limiter import limiter
 
 router = APIRouter( prefix="/auth",tags=["forget"])
 
 @router.post("/forget-password")
-async def forget_password(data: ForgetPassword,db: Session = Depends(get_db)):
+@limiter.limit("2/minute")
+async def forget_password(data: ForgetPassword,request:Request,db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email==data.email).first()
     if not user:
         return {"message":
@@ -38,7 +40,8 @@ async def forget_password(data: ForgetPassword,db: Session = Depends(get_db)):
     }
 
 @router.post("/reset-password")
-async  def reset_password(data: ResetPassword,db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+async  def reset_password(data: ResetPassword,request:Request,db: Session = Depends(get_db)):
     reset = db.query(PasswordResetToken).filter(
         PasswordResetToken.token==data.token
     ).first()
