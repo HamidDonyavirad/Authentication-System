@@ -16,7 +16,7 @@ class RefreshToken(Base):
     user_id = Column(Integer, ForeignKey("user.id"),index=True,nullable=False)
     hashed_token = Column(String,index=True,nullable=False)
     created_at = Column(DateTime,default=utc_now)
-    expires_at = Column(DateTime,default=refresh_token_expiry,timezone=True,nullable=False)
+    expires_at = Column(DateTime(timezone=True),default=refresh_token_expiry,nullable=False)
     is_revoked = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="refresh_tokens")

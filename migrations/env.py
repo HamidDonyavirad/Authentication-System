@@ -7,6 +7,9 @@ from alembic import context
 
 from app.core.database import Base
 from app.models.user import User
+from app.models.task import Task
+from app.models.password_reset import PasswordResetToken
+from app.models.refresh_token import RefreshToken
 from app.core.config import DATABASE_URL
 
 config = context.config
