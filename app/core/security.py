@@ -31,6 +31,7 @@ def create_access_token (data: dict):
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     to_encode.update({"exp": expire})
+    to_encode.update({"token_type": "access" })
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -40,6 +41,8 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     credentials_exception = HTTPException(status_code=401,detail="Could not validate credentials")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("token_type") != "access":
+            raise credentials_exception
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
@@ -62,3 +65,16 @@ def create_refresh_token(data: dict):
 def hash_refresh_token(refresh_token: str):
     return hashlib.sha256(refresh_token.encode()).hexdigest()
 
+def verify_refresh_token(token: str):
+    credentials_exception = HTTPException(status_code=401,detail="Could not validate credentials")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        raise credentials_exception
+    token_type=payload.get("token_type")
+    if token_type != "refresh":
+        raise credentials_exception
+    email = payload.get("sub")
+    if email is None:
+        raise credentials_exception
+    return payload
