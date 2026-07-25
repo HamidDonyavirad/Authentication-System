@@ -59,7 +59,7 @@ async def grt_me(current_user: User = Depends(get_current_user)):
 
 @router.post("/refresh")
 @limiter.limit("5/minute")
-async def token_refresh(data:RefreshTokenSchema,db: Session = Depends(get_db)):
+async def token_refresh(data:RefreshTokenSchema,request: Request,db: Session = Depends(get_db)):
     refresh_token = data.refresh_token
     payload = verify_refresh_token(refresh_token)
     hashed_refresh_token = hash_refresh_token(refresh_token)
