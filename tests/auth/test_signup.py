@@ -1,5 +1,4 @@
 
-
 def test_signup_access(client):
 
     user_test = {
@@ -56,4 +55,3 @@ def test_signup_short_password(client):
     }
     response = client.post("/auth/signup", json=user_test)
     assert response.status_code == 422
-
