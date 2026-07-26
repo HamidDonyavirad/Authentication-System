@@ -15,7 +15,7 @@ from app.core.security import verify_password,create_access_token,get_current_us
 from app.core.limiter import limiter
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
-@router.post("/signup", response_model=UserResponse)
+@router.post("/signup", response_model=UserResponse,status_code=201)
 @limiter.limit("5/minute")
 async def signup(user_data: UserCreate,request: Request, db: Session = Depends(get_db)):
     existing_email = db.query(User).filter(User.email == user_data.email).first()

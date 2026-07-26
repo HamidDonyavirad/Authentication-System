@@ -2,8 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import pytest
 from fastapi.testclient import TestClient
-from app.main import app
 
+from app.main import app
 from app.core.database import Base
 from app.dependencies.dep_database import get_db
 
