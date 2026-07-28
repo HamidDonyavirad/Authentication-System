@@ -5,8 +5,8 @@ def test_login_success(client):
         "password": "123456789"
     }
     user_create = client.post("/auth/signup", json=user_test)
-    response = client.post("/auth/login", json=user_test)
     assert user_create.status_code == 201
+    response = client.post("/auth/login", json=user_test)
     assert response.status_code == 200
     assert "access_token" in response.json()
     assert "refresh_token" in response.json()

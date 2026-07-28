@@ -91,7 +91,7 @@ async def token_refresh(data:RefreshTokenSchema,request: Request,db: Session = D
     return {"access_token": access_token,"refresh_token": new_refresh_token}
 
 
-@router.post("/logout")
+@router.post("/logout",status_code=204)
 async def logout(data:LogoutSchema, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     refresh_token = data.refresh_token
     hashed_refresh_token = hash_refresh_token(refresh_token)
@@ -111,4 +111,3 @@ async def logout(data:LogoutSchema, current_user: User = Depends(get_current_use
     except Exception :
         db.rollback()
         raise
-    return HTTPException(status_code=204, detail="Successfully logged out")
