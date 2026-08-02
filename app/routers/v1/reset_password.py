@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 from app.dependencies.dep_database import get_db
 from app.models.password_reset import PasswordResetToken
-from app.schemas.password_reset import ResetPassword
+from app.schemas.reset_password  import ResetPassword
 from app.models.user import User
 from app.core.security import hash_password
 from app.core.limiter import limiter
