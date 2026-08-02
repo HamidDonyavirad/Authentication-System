@@ -1,5 +1,5 @@
 
-def test_signup_access(client):
+def test_signup_success(client):
 
     user_test = {
         "email": "test@email.com",
