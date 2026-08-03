@@ -1,3 +1,6 @@
+import os
+os.environ["TESTING"] = "True"
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import pytest
