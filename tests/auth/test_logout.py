@@ -4,16 +4,9 @@ from app.models.user import User
 
 
 
-def test_logout_success(client, db):
-    user_test={"email":"test1@test.com","password":"123456789"}
-
-    response_signup = client.post("/auth/signup",json=user_test)
-    assert response_signup.status_code == 201
-    response_login = client.post("/auth/login",json=user_test)
-    assert response_login.status_code == 200
-
-    refresh_token = response_login.json()["refresh_token"]
-    access_token = response_login.json()["access_token"]
+def test_logout_success(client, db,authenticated_user,user_test):
+    refresh_token = authenticated_user.json()["refresh_token"]
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization":f"Bearer {access_token}"}
     json = {"refresh_token":refresh_token}
     response_logout = client.post("/auth/logout",headers=headers,json=json)
@@ -29,44 +22,23 @@ def test_logout_success(client, db):
     assert token_record.is_revoked is True
     
 
-def test_logout_without_access_token(client, db):
-    user_test = {"email": "test2@test.com", "password": "123456789"}
-
-    response_signup = client.post("/auth/signup", json=user_test)
-    assert response_signup.status_code == 201
-    response_login = client.post("/auth/login", json=user_test)
-    assert response_login.status_code == 200
-
-    refresh_token = response_login.json()["refresh_token"]
+def test_logout_without_access_token(client, db,authenticated_user):
+    refresh_token = authenticated_user.json()["refresh_token"]
     headers = {}
     json = {"refresh_token": refresh_token}
     response_logout = client.post("/auth/logout", headers=headers, json=json)
     assert response_logout.status_code == 401
 
-def test_logout_invalid_refresh_token(client, db):
-    user_test = {"email": "test3@test.com", "password": "123456789"}
-
-    response_signup = client.post("/auth/signup", json=user_test)
-    assert response_signup.status_code == 201
-    response_login = client.post("/auth/login", json=user_test)
-    assert response_login.status_code == 200
-
-    access_token = response_login.json()["access_token"]
+def test_logout_invalid_refresh_token(client, db,authenticated_user):
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     json = {"refresh_token": "refresh_token1234"}
     response_logout = client.post("/auth/logout", headers=headers, json=json)
     assert response_logout.status_code == 401
 
-def test_logout_twice(client, db):
-    user_test = {"email": "test4@test.com", "password": "123456789"}
-
-    response_signup = client.post("/auth/signup", json=user_test)
-    assert response_signup.status_code == 201
-    response_login = client.post("/auth/login", json=user_test)
-    assert response_login.status_code == 200
-
-    refresh_token = response_login.json()["refresh_token"]
-    access_token = response_login.json()["access_token"]
+def test_logout_twice(client, db,authenticated_user):
+    refresh_token = authenticated_user.json()["refresh_token"]
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     json = {"refresh_token": refresh_token}
     response_logout = client.post("/auth/logout", headers=headers, json=json)

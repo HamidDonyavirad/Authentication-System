@@ -16,7 +16,7 @@ engine = create_engine(DATABASE_URL_TEST)
 TestingSessionlocal = sessionmaker(bind=engine,autoflush=False,autocommit=False)
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def setup_database():
     Base.metadata.create_all(engine)
     yield
@@ -27,6 +27,23 @@ def db():
     session = TestingSessionlocal()
     yield session
     session.close()
+
+@pytest.fixture
+def authenticated_user(client):
+    user = {
+        "email": "test@test.com",
+        "password": "123456789",
+    }
+
+    client.post("/auth/signup", json=user)
+    login_response = client.post("/auth/login", json=user)
+    return login_response
+
+@pytest.fixture
+def user_test():
+    return {
+        "email": "test@test.com",}
+
 
 def override_get_db():
     db = TestingSessionlocal()

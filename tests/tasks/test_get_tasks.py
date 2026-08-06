@@ -1,15 +1,8 @@
 
 
-def test_get_tasks_success(client):
-    user_test = {
-        "email":"test11@test.com",
-        "password":"123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_get_tasks_success(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
@@ -29,16 +22,9 @@ def test_get_tasks_success(client):
     assert data[0]["completed"] is False
 
 
-def test_get_tasks_empty(client):
-    user_test = {
-        "email":"test12@test.com",
-        "password":"123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_get_tasks_empty(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_response = client.get("/task",headers=headers)
     assert task_response.status_code == 200
@@ -46,16 +32,9 @@ def test_get_tasks_empty(client):
     assert len(data) == 0
     assert type(data) is list
 
-def test_get_tasks_filter_completed(client):
-    user_test = {
-        "email":"test13@test.com",
-        "password":"123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_get_tasks_filter_completed(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
@@ -87,17 +66,8 @@ def test_get_tasks_filter_completed(client):
     assert data[0]["description"] == "test description2"
     assert data[0]["category"] == "test category2"
 
-def test_get_tasks_filter_completed_and_category(client):
-
-    user_test = {
-        "email": "test14@test.com",
-        "password": "123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_get_tasks_filter_completed_and_category(client,authenticated_user):
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
@@ -134,16 +104,8 @@ def test_get_tasks_filter_completed_and_category(client):
     assert data[0]["category"] == "test category2"
 
 
-def test_get_task_success(client):
-    user_test = {
-        "email": "test15@test.com",
-        "password": "123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_get_task_success(client,authenticated_user):
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
@@ -163,16 +125,9 @@ def test_get_task_success(client):
     assert data["completed"] is False
 
 
-def test_get_task_not_found(client):
-    user_test = {
-            "email": "test16@test.com",
-            "password": "123456789",
-        }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_get_task_not_found(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
             "title": "test task",
@@ -185,16 +140,9 @@ def test_get_task_not_found(client):
     task_response = client.get(f"/task/999", headers=headers)
     assert task_response.status_code == 404
 
-def test_get_task_other_user(client):
-    user_test = {
-        "email":"test17@test.com",
-        "password":"123456789"
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_get_task_other_user(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",

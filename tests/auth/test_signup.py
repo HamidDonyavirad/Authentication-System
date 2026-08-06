@@ -23,7 +23,9 @@ def test_signup_duplicate_email(client):
         "password": "123456789hd",
     }
     response = client.post("/auth/signup", json=user_test)
-    assert response.status_code == 400
+    assert response.status_code == 201
+    response_second_time = client.post("/auth/signup", json=user_test)
+    assert response_second_time.status_code == 400
 
 def test_signup_invalid_email (client):
     user_test = {

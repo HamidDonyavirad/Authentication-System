@@ -1,17 +1,9 @@
 from app.models.task import Task
 
 
-def test_create_task_success(client,db):
-    user_test = {
-        "email":"test10@test.com",
-        "password":"123456789",
-    }
+def test_create_task_success(client,db,authenticated_user):
 
-    signup_response = client.post("/auth/signup",json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login",json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",

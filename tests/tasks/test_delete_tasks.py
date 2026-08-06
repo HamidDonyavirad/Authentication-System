@@ -1,16 +1,10 @@
 from app.models.task import Task
 
 
-def test_delete_task_success(client,db):
-    user_test = {
-        "email": "test23@test.com",
-        "password": "123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+
+def test_delete_task_success(client,db,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
@@ -27,16 +21,9 @@ def test_delete_task_success(client,db):
     assert task_response.json() == {"message": "Task deleted"}
 
 
-def test_delete_task_not_found(client):
-    user_test = {
-        "email": "test24@test.com",
-        "password": "123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_delete_task_not_found(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
@@ -49,16 +36,9 @@ def test_delete_task_not_found(client):
     assert task_response.status_code == 404
 
 
-def test_delete_task_other_user(client):
-    user_test_1 = {
-        "email": "test25@test.com",
-        "password": "123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test_1)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test_1)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_delete_task_other_user(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
@@ -86,16 +66,9 @@ def test_delete_task_other_user(client):
     assert task_response.status_code == 404
 
 
-def test_delete_task_deleted(client):
-    user_test = {
-        "email":"test27@test.com",
-        "password": "123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_delete_task_deleted(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",

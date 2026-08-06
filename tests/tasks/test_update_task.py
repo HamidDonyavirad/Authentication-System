@@ -1,16 +1,9 @@
 
 
 
-def test_update_task_success(client):
-    user_test = {
-        "email": "test19@test.com",
-        "password": "123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_update_task_success(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
@@ -33,16 +26,9 @@ def test_update_task_success(client):
     assert data["completed"] is True
 
 
-def test_update_task_not_found(client):
-    user_test = {
-        "email": "test20@test.com",
-        "password": "123456789",
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_update_task_not_found(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
@@ -59,16 +45,9 @@ def test_update_task_not_found(client):
     assert task_update_response.status_code == 404
 
 
-def test_update_task_other_user(client):
-    user_test = {
-        "email": "test21@test.com",
-        "password": "123456789"
-    }
-    signup_response = client.post("/auth/signup", json=user_test)
-    assert signup_response.status_code == 201
-    login_response = client.post("/auth/login", json=user_test)
-    assert login_response.status_code == 200
-    access_token = login_response.json()["access_token"]
+def test_update_task_other_user(client,authenticated_user):
+
+    access_token = authenticated_user.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     task_data = {
         "title": "test task",
