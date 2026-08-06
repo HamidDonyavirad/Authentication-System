@@ -1,7 +1,7 @@
 
 def test_login_success(client):
     user_test = {
-        "email": "bagher@email.com",
+        "email": "testl@test.com",
         "password": "123456789"
     }
     user_create = client.post("/auth/signup", json=user_test)
@@ -18,11 +18,11 @@ def test_login_success(client):
 
 def test_login_invalid_password(client):
     user_test = {
-        "email": "test35@email.com",
+        "email": "testl2@test.com",
         "password": "123456789"
     }
     user_test_invalid_password = {
-        "email": "test3@email.com",
+        "email": "testl33@test.com",
         "password": "1234567899"
     }
     response_signup = client.post("/auth/signup", json=user_test)
@@ -34,11 +34,11 @@ def test_login_invalid_password(client):
 
 def test_login_wrong_email(client):
     user_test = {
-        "email":"test1@email.com",
+        "email":"testl4@test.com",
         "password": "123456789"
     }
     user_test_invalid_email = {
-        "email":"test2@email.com",
+        "email":"testl5@test.com",
         "password":"123456789"
     }
     response_signup = client.post("/auth/signup", json=user_test)
@@ -50,7 +50,7 @@ def test_login_wrong_email(client):
 
 def test_login_invalid_email(client):
     user_test = {
-        "email":"test5@email.com",
+        "email":"testl6@test.com",
         "password":"123456789"
     }
     user_test_invalid_email = {
